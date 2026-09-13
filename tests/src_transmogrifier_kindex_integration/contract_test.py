@@ -1,5 +1,5 @@
 """
-Contract test suite for src_transmogrifier_kindex_integration
+Contract test suite for transmogrifier.kindex_integration
 
 This test suite verifies the Kindex integration module against its contract,
 testing initialization, availability checking, error handling, state management,
@@ -22,7 +22,7 @@ from typing import Any
 
 # Import the module under test
 # The actual module path should be adjusted based on the project structure
-import src_transmogrifier_kindex_integration as kindex_integration
+import transmogrifier.kindex_integration as kindex_integration
 
 
 @pytest.fixture(autouse=True)

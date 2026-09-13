@@ -1,5 +1,5 @@
 """
-Contract tests for src.transmogrifier.backends module.
+Contract tests for transmogrifier.backends module.
 
 Tests verify the Backend protocol and create_backend factory function against
 the contract specification. All external dependencies are mocked.
@@ -39,27 +39,21 @@ class MockGeminiBackend:
         return f"Gemini completion: {system}"
 
 
-# Patch the imports at module level
-sys.modules['src'] = MagicMock()
-sys.modules['src.transmogrifier'] = MagicMock()
-sys.modules['src.transmogrifier.backends'] = MagicMock()
-sys.modules['src.transmogrifier.backends.anthropic'] = MagicMock()
-sys.modules['src.transmogrifier.backends.openai'] = MagicMock()
-sys.modules['src.transmogrifier.backends.gemini'] = MagicMock()
+# Mock backend constructors within each test; never replace the package in sys.modules.
 
 
 class TestCreateBackendHappyPath:
     """Happy path tests for create_backend function."""
     
     @patch.dict(os.environ, {}, clear=True)
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_create_backend_default_anthropic(self):
         """
         Happy path: create_backend returns AnthropicBackend when no backend 
         specified and TRANSMOG_BACKEND not set.
         """
         # Import after patching
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend=None, kwargs={})
         
@@ -67,12 +61,12 @@ class TestCreateBackendHappyPath:
         assert hasattr(result, 'complete')
         assert isinstance(result, MockAnthropicBackend)
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_create_backend_explicit_anthropic(self):
         """
         Happy path: create_backend with explicit 'anthropic' backend parameter.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend='anthropic', kwargs={})
         
@@ -80,12 +74,12 @@ class TestCreateBackendHappyPath:
         assert hasattr(result, 'complete')
         assert isinstance(result, MockAnthropicBackend)
     
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
     def test_create_backend_openai(self):
         """
         Happy path: create_backend with 'openai' backend parameter.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend='openai', kwargs={})
         
@@ -93,12 +87,12 @@ class TestCreateBackendHappyPath:
         assert hasattr(result, 'complete')
         assert isinstance(result, MockOpenAIBackend)
     
-    @patch('src.transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
+    @patch('transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
     def test_create_backend_gemini(self):
         """
         Happy path: create_backend with 'gemini' backend parameter.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend='gemini', kwargs={})
         
@@ -107,12 +101,12 @@ class TestCreateBackendHappyPath:
         assert isinstance(result, MockGeminiBackend)
     
     @patch.dict(os.environ, {'TRANSMOG_BACKEND': 'anthropic'})
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_create_backend_env_var_anthropic(self):
         """
         Happy path: create_backend reads TRANSMOG_BACKEND env var when backend is None.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend=None, kwargs={})
         
@@ -120,12 +114,12 @@ class TestCreateBackendHappyPath:
         assert isinstance(result, MockAnthropicBackend)
     
     @patch.dict(os.environ, {'TRANSMOG_BACKEND': 'openai'})
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
     def test_create_backend_env_var_openai(self):
         """
         Happy path: create_backend reads TRANSMOG_BACKEND env var for openai.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend=None, kwargs={})
         
@@ -133,25 +127,25 @@ class TestCreateBackendHappyPath:
         assert isinstance(result, MockOpenAIBackend)
     
     @patch.dict(os.environ, {'TRANSMOG_BACKEND': 'gemini'})
-    @patch('src.transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
+    @patch('transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
     def test_create_backend_env_var_gemini(self):
         """
         Happy path: create_backend reads TRANSMOG_BACKEND env var for gemini.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend=None, kwargs={})
         
         assert result is not None
         assert isinstance(result, MockGeminiBackend)
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend')
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend')
     def test_create_backend_with_kwargs(self, mock_anthropic_class):
         """
         Happy path: create_backend passes kwargs to backend constructor.
         """
         mock_anthropic_class.return_value = MockAnthropicBackend()
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         test_kwargs = {'api_key': 'test-key', 'timeout': 30}
         result = create_backend(backend='anthropic', kwargs=test_kwargs)
@@ -167,13 +161,13 @@ class TestCreateBackendEdgeCases:
     """Edge case tests for create_backend function."""
     
     @patch.dict(os.environ, {'TRANSMOG_BACKEND': 'anthropic'})
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_create_backend_parameter_overrides_env(self):
         """
         Edge case: explicit backend parameter overrides TRANSMOG_BACKEND env var.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend='openai', kwargs={})
         
@@ -181,12 +175,12 @@ class TestCreateBackendEdgeCases:
         assert isinstance(result, MockOpenAIBackend)
         assert not isinstance(result, MockAnthropicBackend)
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_create_backend_empty_kwargs(self):
         """
         Edge case: create_backend with empty kwargs dict.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         result = create_backend(backend='anthropic', kwargs={})
         
@@ -197,7 +191,7 @@ class TestCreateBackendEdgeCases:
         """
         Edge case: backend parameter is case-sensitive.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='Anthropic', kwargs={})
@@ -214,7 +208,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error for invalid backend name.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='invalid_backend', kwargs={})
@@ -228,7 +222,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error for numeric backend name.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='123', kwargs={})
@@ -239,7 +233,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error for empty string backend.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='', kwargs={})
@@ -250,7 +244,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error for whitespace-only backend.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='   ', kwargs={})
@@ -261,7 +255,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error for special characters.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend='@#$%', kwargs={})
@@ -273,7 +267,7 @@ class TestCreateBackendErrorCases:
         """
         Error case: unknown_backend error when TRANSMOG_BACKEND env var is invalid.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         with pytest.raises(Exception) as exc_info:
             create_backend(backend=None, kwargs={})
@@ -285,12 +279,12 @@ class TestCreateBackendInvariants:
     """Invariant tests for create_backend function."""
     
     @patch.dict(os.environ, {}, clear=True)
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
     def test_invariant_default_anthropic(self):
         """
         Invariant: Default backend is 'anthropic' when TRANSMOG_BACKEND is not set.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         # Ensure env var not set
         if 'TRANSMOG_BACKEND' in os.environ:
@@ -300,14 +294,14 @@ class TestCreateBackendInvariants:
         
         assert isinstance(result, MockAnthropicBackend)
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
-    @patch('src.transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
     def test_invariant_only_three_backends(self):
         """
         Invariant: Only three backend types are supported.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         # Test valid backends work
         valid_backends = ['anthropic', 'openai', 'gemini']
@@ -322,14 +316,14 @@ class TestCreateBackendInvariants:
             with pytest.raises(Exception):
                 create_backend(backend=backend_name, kwargs={})
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
-    @patch('src.transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
     def test_invariant_all_backends_have_complete(self):
         """
         Invariant: All backends implement the Backend protocol with complete() method.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         
         anthropic_backend = create_backend(backend='anthropic', kwargs={})
         openai_backend = create_backend(backend='openai', kwargs={})
@@ -343,14 +337,14 @@ class TestCreateBackendInvariants:
         assert callable(openai_backend.complete)
         assert callable(gemini_backend.complete)
     
-    @patch('src.transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
-    @patch('src.transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
-    @patch('src.transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
+    @patch('transmogrifier.backends.anthropic.AnthropicBackend', MockAnthropicBackend)
+    @patch('transmogrifier.backends.openai.OpenAIBackend', MockOpenAIBackend)
+    @patch('transmogrifier.backends.gemini.GeminiBackend', MockGeminiBackend)
     def test_backend_protocol_conformance(self):
         """
         Invariant: Backend protocol conformance - all backends are callable with complete signature.
         """
-        from src.transmogrifier.backends.__init__ import create_backend
+        from transmogrifier.backends import create_backend
         import inspect
         
         backends = [

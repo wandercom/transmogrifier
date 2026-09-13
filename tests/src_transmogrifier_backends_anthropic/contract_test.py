@@ -14,7 +14,7 @@ All dependencies are mocked using unittest.mock.
 import pytest
 import os
 from unittest.mock import Mock, patch, MagicMock
-from src.transmogrifier.backends.anthropic import AnthropicBackend
+from transmogrifier.backends.anthropic import AnthropicBackend
 
 
 class TestAnthropicBackendInit:
@@ -69,7 +69,7 @@ class TestAnthropicBackendInit:
 class TestEnsureClient:
     """Test suite for _ensure_client method covering lazy initialization."""
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_ensure_client_lazy_initialization(self, mock_anthropic_module):
         """Verify _ensure_client creates client on first call and _client is not None."""
         mock_client_instance = Mock()
@@ -84,7 +84,7 @@ class TestEnsureClient:
         assert backend._client == mock_client_instance
         mock_anthropic_module.Anthropic.assert_called_once_with(api_key="test-key")
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_ensure_client_idempotent(self, mock_anthropic_module):
         """Verify _ensure_client does not recreate client on subsequent calls."""
         mock_client_instance = Mock()
@@ -101,7 +101,7 @@ class TestEnsureClient:
     
     def test_ensure_client_import_error(self):
         """Verify _ensure_client raises ImportError when anthropic package not installed."""
-        with patch('src_transmogrifier_backends_anthropic.anthropic', None):
+        with patch('transmogrifier.backends.anthropic.anthropic', None):
             backend = AnthropicBackend(api_key="test-key", model="test-model")
             
             # Trigger import error by attempting to use anthropic when it's None
@@ -109,7 +109,7 @@ class TestEnsureClient:
                 with pytest.raises((ImportError, AttributeError)):
                     backend._ensure_client()
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_ensure_client_authentication_error(self, mock_anthropic_module):
         """Verify _ensure_client raises AuthenticationError with invalid API key."""
         # Create a mock exception class that mimics anthropic's AuthenticationError
@@ -128,7 +128,7 @@ class TestEnsureClient:
 class TestComplete:
     """Test suite for complete method covering success and error paths."""
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_success_single_message(self, mock_anthropic_module):
         """Verify complete returns text content for single message with system prompt."""
         # Setup mock response
@@ -154,7 +154,7 @@ class TestComplete:
         assert backend._client is not None
         mock_client.messages.create.assert_called_once()
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_success_multiple_messages(self, mock_anthropic_module):
         """Verify complete handles multi-turn conversation."""
         mock_content_block = Mock()
@@ -183,7 +183,7 @@ class TestComplete:
         
         assert result == "I am doing well"
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_empty_system_prompt(self, mock_anthropic_module):
         """Verify complete works with empty system prompt."""
         mock_content_block = Mock()
@@ -207,7 +207,7 @@ class TestComplete:
         assert isinstance(result, str)
         assert result == "Response text"
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_large_max_tokens(self, mock_anthropic_module):
         """Verify complete handles large max_tokens value."""
         mock_content_block = Mock()
@@ -245,7 +245,7 @@ class TestComplete:
                     max_tokens=100
                 )
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_authentication_error(self, mock_anthropic_module):
         """Verify complete raises AuthenticationError with invalid API key."""
         mock_auth_error = type('AuthenticationError', (Exception,), {})
@@ -264,7 +264,7 @@ class TestComplete:
                 max_tokens=100
             )
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_api_error_invalid_model(self, mock_anthropic_module):
         """Verify complete raises APIError for invalid model."""
         mock_api_error = type('APIError', (Exception,), {})
@@ -283,7 +283,7 @@ class TestComplete:
                 max_tokens=100
             )
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_api_error_rate_limit(self, mock_anthropic_module):
         """Verify complete raises APIError for rate limit."""
         mock_api_error = type('RateLimitError', (Exception,), {})
@@ -302,7 +302,7 @@ class TestComplete:
                 max_tokens=100
             )
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_index_error_empty_content(self, mock_anthropic_module):
         """Verify complete raises IndexError when response.content is empty."""
         mock_response = Mock()
@@ -321,7 +321,7 @@ class TestComplete:
                 max_tokens=100
             )
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_complete_attribute_error_no_text(self, mock_anthropic_module):
         """Verify complete raises AttributeError when content[0] has no .text attribute."""
         mock_content_block = Mock(spec=[])  # Mock with no attributes
@@ -355,7 +355,7 @@ class TestInvariants:
         
         assert backend._model == "claude-haiku-4-5-20251001"
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_invariant_client_none_until_first_use(self, mock_anthropic_module):
         """Verify _client is None until first use, then remains initialized."""
         mock_client = Mock()
@@ -375,7 +375,7 @@ class TestInvariants:
         backend._ensure_client()
         assert backend._client is first_client  # Same instance
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_invariant_api_key_immutable(self, mock_anthropic_module):
         """Verify _api_key remains unchanged after initialization."""
         mock_client = Mock()
@@ -398,7 +398,7 @@ class TestInvariants:
         backend.complete(system="test", messages=[{"role": "user", "content": "hi"}], max_tokens=10)
         assert backend._api_key == "original-key"
     
-    @patch('src_transmogrifier_backends_anthropic.anthropic')
+    @patch('transmogrifier.backends.anthropic.anthropic')
     def test_invariant_model_immutable(self, mock_anthropic_module):
         """Verify _model remains unchanged after initialization."""
         mock_client = Mock()

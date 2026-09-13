@@ -1,5 +1,5 @@
 """
-Contract test suite for src_transmogrifier_mcp_server
+Contract test suite for transmogrifier.mcp_server
 Generated from contract version 1
 
 Tests verify MCP server initialization, tool registration, and core transmogrifier
@@ -31,14 +31,14 @@ def test_main_happy_path_server_initialization():
         'mcp.server': Mock(),
         'mcp.server.fastmcp': Mock(FastMCP=mock_fastmcp_class)
     }):
-        with patch('src.transmogrifier.core.Transmogrifier', return_value=mock_transmogrifier):
+        with patch('transmogrifier.core.Transmogrifier', return_value=mock_transmogrifier):
             # Import after patching to ensure mocks are in place
             import importlib
             
             # Create a mock module with main function
             mock_main_code = """
 from mcp.server.fastmcp import FastMCP
-from src.transmogrifier.core import Transmogrifier
+from transmogrifier.core import Transmogrifier
 
 def main():
     mcp = FastMCP(name='transmogrifier')
@@ -107,7 +107,7 @@ def test_invariant_single_transmogrifier_instance():
     mock_instance = Mock()
     mock_transmogrifier_class.return_value = mock_instance
     
-    with patch('src.transmogrifier.core.Transmogrifier', mock_transmogrifier_class):
+    with patch('transmogrifier.core.Transmogrifier', mock_transmogrifier_class):
         # Simulate main() creating single instance
         _t = mock_transmogrifier_class()
         
@@ -193,7 +193,7 @@ def test_transmog_translate_happy_path_basic():
     
     # Simulate transmog_translate function
     def transmog_translate(text: str, model: str, target_register: str) -> dict:
-        from src.transmogrifier.core import TranslationConfig, Register
+        from transmogrifier.core import TranslationConfig, Register
         config = TranslationConfig()
         if target_register:
             config.target_register = Register(target_register)
@@ -363,7 +363,7 @@ def test_translate_new_config_instance():
     mock_config_class.side_effect = create_config
     
     # Simulate two calls
-    with patch('src.transmogrifier.core.TranslationConfig', mock_config_class):
+    with patch('transmogrifier.core.TranslationConfig', mock_config_class):
         for _ in range(2):
             config = mock_config_class()
     

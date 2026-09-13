@@ -19,7 +19,7 @@ dependencies = [
 anthropic = ["anthropic>=0.40"]
 openai = ["openai>=1.0"]
 gemini = ["google-genai>=1.0"]
-mcp = ["mcp[cli]>=1.26.0"]
+mcp = ["mcp[cli]>=1.26.0,<2"]
 kindex = ["kindex"]
 dev = ["pytest>=8.0"]
 all = ["transmogrifier[anthropic,openai,gemini,mcp,kindex,dev]"]

@@ -9,7 +9,7 @@ import pytest
 import re
 import time
 from unittest.mock import Mock, MagicMock
-from src.transmogrifier.rules import RuleEngine, RewriteRule
+from transmogrifier.rules import RuleEngine, RewriteRule
 
 
 class TestRewriteHappyPath:

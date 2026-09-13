@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch, mock_open, MagicMock
 from typing import Any
 
 # Import the component under test
-from src.transmogrifier.profiles import (
+from transmogrifier.profiles import (
     RegisterAccuracy,
     TaskRegisterProfile,
     ModelProfile,
@@ -681,7 +681,7 @@ def test_profile_cache_get_from_preseeded(temp_cache_dir):
     }
     
     with patch.object(cache, '_load_file', return_value=None):
-        with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+        with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
             result = cache.get("claude-opus-4")
     
     assert result is not None, "Should return pre-seeded profile"
@@ -696,7 +696,7 @@ def test_profile_cache_get_with_alias_resolution(temp_cache_dir, sample_model_pr
     mock_aliases = {"aliased-model-v2": "canonical-model"}
     sample_model_profile.model_name = "canonical-model"
     
-    with patch('src_transmogrifier_profiles._ALIASES', mock_aliases):
+    with patch('transmogrifier.profiles._ALIASES', mock_aliases):
         with patch.object(cache, '_load_file', return_value=sample_model_profile):
             result = cache.get("aliased-model-v2")
     
@@ -709,7 +709,7 @@ def test_profile_cache_get_not_found(temp_cache_dir):
     cache = ProfileCache(cache_dir=temp_cache_dir)
     
     with patch.object(cache, '_load_file', return_value=None):
-        with patch('src_transmogrifier_profiles._PRESEEDED', {}):
+        with patch('transmogrifier.profiles._PRESEEDED', {}):
             result = cache.get("nonexistent-model")
     
     assert result is None, "Should return None for non-existent model"
@@ -747,7 +747,7 @@ def test_profile_cache_get_expired_profile_fallback(temp_cache_dir):
     mock_preseeded = {"claude-opus-4": fresh_profile}
     
     with patch.object(cache, '_load_file', return_value=expired_profile):
-        with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+        with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
             result = cache.get("claude-opus-4")
     
     assert result == fresh_profile, "Should return pre-seeded profile when cached is expired"
@@ -772,7 +772,7 @@ def test_profile_cache_get_partial_match_preseeded(temp_cache_dir):
     mock_preseeded = {"gpt-4o-mini": preseeded_profile}
     
     with patch.object(cache, '_load_file', return_value=None):
-        with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+        with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
             result = cache.get("gpt-4o-mini-2024")
     
     assert result is not None, "Should find profile via partial match"
@@ -911,7 +911,7 @@ def test_profile_cache_invalidate_with_alias(temp_cache_dir):
     
     mock_aliases = {"aliased-model": "canonical-model"}
     
-    with patch('src_transmogrifier_profiles._ALIASES', mock_aliases):
+    with patch('transmogrifier.profiles._ALIASES', mock_aliases):
         result = cache.invalidate("aliased-model")
     
     assert result is True, "Should resolve alias and invalidate canonical model"
@@ -945,7 +945,7 @@ def test_profile_cache_list_profiles_preseeded_only(temp_cache_dir):
         )
     }
     
-    with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+    with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
         result = cache.list_profiles()
     
     assert len(result) == 2, "Should return all pre-seeded profiles"
@@ -1000,7 +1000,7 @@ def test_profile_cache_list_profiles_with_cached(temp_cache_dir):
         "preseeded-model": preseeded_unique
     }
     
-    with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+    with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
         result = cache.list_profiles()
     
     model_names = [p.model_name for p in result]
@@ -1031,7 +1031,7 @@ def test_profile_cache_list_profiles_skips_invalid_files(temp_cache_dir):
     corrupted_file = temp_cache_dir / "corrupted.json"
     corrupted_file.write_text("{ invalid json }")
     
-    with patch('src_transmogrifier_profiles._PRESEEDED', {}):
+    with patch('transmogrifier.profiles._PRESEEDED', {}):
         result = cache.list_profiles()
     
     model_names = [p.model_name for p in result]
@@ -1059,7 +1059,7 @@ def test_profile_cache_list_profiles_empty_directory(temp_cache_dir):
         )
     }
     
-    with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+    with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
         result = cache.list_profiles()
     
     assert len(result) == 1, "Should return pre-seeded profiles only"
@@ -1109,7 +1109,7 @@ def test_profile_cache_load_file_invalid_json(temp_cache_dir):
     corrupted_file = temp_cache_dir / "corrupt.json"
     corrupted_file.write_text("{ invalid json }")
     
-    with patch('src_transmogrifier_profiles.logger') as mock_logger:
+    with patch('transmogrifier.profiles.logger') as mock_logger:
         result = cache._load_file("corrupt")
     
     assert result is None, "Should return None for invalid JSON"
@@ -1141,7 +1141,7 @@ def test_invariant_preseeded_models_exist(temp_cache_dir):
         for name in required_models
     }
     
-    with patch('src_transmogrifier_profiles._PRESEEDED', mock_preseeded):
+    with patch('transmogrifier.profiles._PRESEEDED', mock_preseeded):
         for model_name in required_models:
             with patch.object(cache, '_load_file', return_value=None):
                 result = cache.get(model_name)

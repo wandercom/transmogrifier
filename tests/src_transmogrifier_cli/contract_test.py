@@ -64,7 +64,7 @@ def mock_calibration_runner():
 def test_main_happy_path(cli_runner):
     """Verify main() creates click.Group with all expected subcommands."""
     with patch('sys.modules', {'click': __import__('click')}):
-        from src.transmogrifier.cli import main
+        from transmogrifier.cli import main
         
         result = cli_runner.invoke(main, [])
         
@@ -82,7 +82,7 @@ def test_main_happy_path(cli_runner):
 
 def test_main_help_text(cli_runner):
     """Verify main --help displays correct help text and exits cleanly."""
-    from src.transmogrifier.cli import main
+    from transmogrifier.cli import main
     
     result = cli_runner.invoke(main, ['--help'])
     
@@ -94,12 +94,12 @@ def test_main_help_text(cli_runner):
 
 def test_detect_happy_path(cli_runner, mock_transmogrifier):
     """Verify detect outputs valid JSON with register and confidence keys."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     # Mock the detector to return expected values
     mock_result = {'register': 'casual', 'confidence': 0.85}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
         
@@ -117,11 +117,11 @@ def test_detect_happy_path(cli_runner, mock_transmogrifier):
 
 def test_classify_happy_path(cli_runner, mock_transmogrifier):
     """Verify classify outputs valid JSON with task_type and confidence keys."""
-    from src.transmogrifier.cli import classify
+    from transmogrifier.cli import classify
     
     mock_result = {'task_type': 'translation', 'confidence': 0.92}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._task_classifier.classify.return_value = mock_result
         
@@ -139,7 +139,7 @@ def test_classify_happy_path(cli_runner, mock_transmogrifier):
 
 def test_translate_happy_path_json(cli_runner, mock_transmogrifier):
     """Verify translate outputs valid JSON with all required fields when as_json=True."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
     mock_result = {
         'detected_register': 'casual',
@@ -150,7 +150,7 @@ def test_translate_happy_path_json(cli_runner, mock_transmogrifier):
         'transformed_output': 'Greetings, colleague'
     }
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier.translate.return_value = mock_result
         
@@ -175,7 +175,7 @@ def test_translate_happy_path_json(cli_runner, mock_transmogrifier):
 
 def test_translate_happy_path_formatted(cli_runner, mock_transmogrifier):
     """Verify translate outputs formatted text when as_json=False."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
     mock_result = {
         'detected_register': 'casual',
@@ -186,7 +186,7 @@ def test_translate_happy_path_formatted(cli_runner, mock_transmogrifier):
         'transformed_output': 'Hello there'
     }
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier.translate.return_value = mock_result
         
@@ -210,7 +210,7 @@ def test_translate_happy_path_formatted(cli_runner, mock_transmogrifier):
 
 def test_profile_happy_path(cli_runner):
     """Verify profile() creates click.Group with list, show, calibrate subcommands."""
-    from src.transmogrifier.cli import profile
+    from transmogrifier.cli import profile
     
     # Test help to verify it's a group with subcommands
     result = cli_runner.invoke(profile, ['--help'])
@@ -226,7 +226,7 @@ def test_profile_happy_path(cli_runner):
 
 def test_profile_help_text(cli_runner):
     """Verify profile --help displays correct help text."""
-    from src.transmogrifier.cli import profile
+    from transmogrifier.cli import profile
     
     result = cli_runner.invoke(profile, ['--help'])
     
@@ -237,7 +237,7 @@ def test_profile_help_text(cli_runner):
 
 def test_profile_list_happy_path(cli_runner, mock_profile_cache):
     """Verify profile_list displays all cached profiles with statistics."""
-    from src.transmogrifier.cli import profile_list
+    from transmogrifier.cli import profile_list
     
     mock_profiles = [
         {
@@ -254,7 +254,7 @@ def test_profile_list_happy_path(cli_runner, mock_profile_cache):
         }
     ]
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.list_all.return_value = mock_profiles
         
@@ -268,7 +268,7 @@ def test_profile_list_happy_path(cli_runner, mock_profile_cache):
 
 def test_profile_show_happy_path(cli_runner, mock_profile_cache):
     """Verify profile_show displays detailed profile info for existing model."""
-    from src.transmogrifier.cli import profile_show
+    from transmogrifier.cli import profile_show
     
     mock_profile = {
         'model_name': 'gpt-4',
@@ -285,7 +285,7 @@ def test_profile_show_happy_path(cli_runner, mock_profile_cache):
         }
     }
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.get.return_value = mock_profile
         
@@ -299,7 +299,7 @@ def test_profile_show_happy_path(cli_runner, mock_profile_cache):
 
 def test_profile_calibrate_happy_path_full(cli_runner, mock_backend, mock_calibration_runner):
     """Verify profile_calibrate runs full calibration and saves profile."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
     mock_profile_result = {
         'spread': 0.14,
@@ -307,9 +307,9 @@ def test_profile_calibrate_happy_path_full(cli_runner, mock_backend, mock_calibr
         'accuracies': {'formal': 0.95, 'casual': 0.81}
     }
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner, \
-         patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner, \
+         patch('transmogrifier.cli.ProfileCache') as MockCache:
         
         mock_create.return_value = mock_backend
         MockRunner.return_value = mock_calibration_runner
@@ -334,7 +334,7 @@ def test_profile_calibrate_happy_path_full(cli_runner, mock_backend, mock_calibr
 
 def test_profile_calibrate_happy_path_quick(cli_runner, mock_backend, mock_calibration_runner):
     """Verify profile_calibrate runs quick mode with exactly 10 tasks."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
     mock_profile_result = {
         'spread': 0.10,
@@ -342,10 +342,10 @@ def test_profile_calibrate_happy_path_quick(cli_runner, mock_backend, mock_calib
         'accuracies': {'technical': 0.93, 'casual': 0.83}
     }
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner, \
-         patch('src_transmogrifier_cli.ProfileCache') as MockCache, \
-         patch('src_transmogrifier_cli.BENCHMARK_TASKS', ['task%d' % i for i in range(50)]):
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner, \
+         patch('transmogrifier.cli.ProfileCache') as MockCache, \
+         patch('transmogrifier.cli.BENCHMARK_TASKS', ['task%d' % i for i in range(50)]):
         
         mock_create.return_value = mock_backend
         mock_runner_inst = Mock()
@@ -378,11 +378,11 @@ def test_profile_calibrate_happy_path_quick(cli_runner, mock_backend, mock_calib
 
 def test_detect_empty_text(cli_runner, mock_transmogrifier):
     """Verify detect handles empty string gracefully."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     mock_result = {'register': 'unknown', 'confidence': 0.0}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
         
@@ -396,11 +396,11 @@ def test_detect_empty_text(cli_runner, mock_transmogrifier):
 
 def test_detect_unicode_text(cli_runner, mock_transmogrifier):
     """Verify detect handles Unicode text correctly."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     mock_result = {'register': 'casual', 'confidence': 0.75}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
         
@@ -413,13 +413,13 @@ def test_detect_unicode_text(cli_runner, mock_transmogrifier):
 
 def test_detect_large_text(cli_runner, mock_transmogrifier):
     """Verify detect handles large text input (>10KB)."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     # Generate large text (>10KB)
     large_text = 'a' * 15000
     mock_result = {'register': 'formal', 'confidence': 0.88}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
         
@@ -432,11 +432,11 @@ def test_detect_large_text(cli_runner, mock_transmogrifier):
 
 def test_classify_empty_text(cli_runner, mock_transmogrifier):
     """Verify classify handles empty string."""
-    from src.transmogrifier.cli import classify
+    from transmogrifier.cli import classify
     
     mock_result = {'task_type': 'unknown', 'confidence': 0.0}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._task_classifier.classify.return_value = mock_result
         
@@ -449,11 +449,11 @@ def test_classify_empty_text(cli_runner, mock_transmogrifier):
 
 def test_classify_unicode_text(cli_runner, mock_transmogrifier):
     """Verify classify handles Unicode and special characters."""
-    from src.transmogrifier.cli import classify
+    from transmogrifier.cli import classify
     
     mock_result = {'task_type': 'generation', 'confidence': 0.87}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._task_classifier.classify.return_value = mock_result
         
@@ -466,7 +466,7 @@ def test_classify_unicode_text(cli_runner, mock_transmogrifier):
 
 def test_translate_no_target(cli_runner, mock_transmogrifier):
     """Verify translate works when target is None (auto-detect optimal register)."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
     mock_result = {
         'detected_register': 'casual',
@@ -477,7 +477,7 @@ def test_translate_no_target(cli_runner, mock_transmogrifier):
         'transformed_output': 'Test output'
     }
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier.translate.return_value = mock_result
         
@@ -494,7 +494,7 @@ def test_translate_no_target(cli_runner, mock_transmogrifier):
 
 def test_translate_empty_text(cli_runner, mock_transmogrifier):
     """Verify translate handles empty text input."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
     mock_result = {
         'detected_register': 'unknown',
@@ -505,7 +505,7 @@ def test_translate_empty_text(cli_runner, mock_transmogrifier):
         'transformed_output': ''
     }
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier.translate.return_value = mock_result
         
@@ -519,9 +519,9 @@ def test_translate_empty_text(cli_runner, mock_transmogrifier):
 
 def test_profile_list_empty_cache(cli_runner, mock_profile_cache):
     """Verify profile_list handles empty profile cache gracefully."""
-    from src.transmogrifier.cli import profile_list
+    from transmogrifier.cli import profile_list
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.list_all.return_value = []
         
@@ -533,7 +533,7 @@ def test_profile_list_empty_cache(cli_runner, mock_profile_cache):
 
 def test_profile_list_invariant_profiles(cli_runner, mock_profile_cache):
     """Verify profile_list marks invariant profiles correctly."""
-    from src.transmogrifier.cli import profile_list
+    from transmogrifier.cli import profile_list
     
     mock_profiles = [
         {
@@ -544,7 +544,7 @@ def test_profile_list_invariant_profiles(cli_runner, mock_profile_cache):
         }
     ]
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.list_all.return_value = mock_profiles
         
@@ -557,9 +557,9 @@ def test_profile_list_invariant_profiles(cli_runner, mock_profile_cache):
 
 def test_profile_show_missing_profile(cli_runner, mock_profile_cache):
     """Verify profile_show displays not-found message for missing model."""
-    from src.transmogrifier.cli import profile_show
+    from transmogrifier.cli import profile_show
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.get.return_value = None
         
@@ -571,9 +571,9 @@ def test_profile_show_missing_profile(cli_runner, mock_profile_cache):
 
 def test_profile_show_empty_model_name(cli_runner, mock_profile_cache):
     """Verify profile_show handles empty model name."""
-    from src.transmogrifier.cli import profile_show
+    from transmogrifier.cli import profile_show
     
-    with patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.ProfileCache') as MockCache:
         MockCache.return_value = mock_profile_cache
         mock_profile_cache.get.return_value = None
         
@@ -585,7 +585,7 @@ def test_profile_show_empty_model_name(cli_runner, mock_profile_cache):
 
 def test_profile_calibrate_no_model_id(cli_runner, mock_backend, mock_calibration_runner):
     """Verify profile_calibrate works when model_id is None."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
     mock_profile_result = {
         'spread': 0.11,
@@ -593,9 +593,9 @@ def test_profile_calibrate_no_model_id(cli_runner, mock_backend, mock_calibratio
         'accuracies': {}
     }
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner, \
-         patch('src_transmogrifier_cli.ProfileCache') as MockCache:
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner, \
+         patch('transmogrifier.cli.ProfileCache') as MockCache:
         
         mock_create.return_value = mock_backend
         MockRunner.return_value = mock_calibration_runner
@@ -618,9 +618,9 @@ def test_profile_calibrate_no_model_id(cli_runner, mock_backend, mock_calibratio
 
 def test_detect_detector_failure(cli_runner, mock_transmogrifier):
     """Verify detect handles detector exception gracefully."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.side_effect = Exception('Detector failed')
         
@@ -632,9 +632,9 @@ def test_detect_detector_failure(cli_runner, mock_transmogrifier):
 
 def test_classify_classifier_failure(cli_runner, mock_transmogrifier):
     """Verify classify handles classifier exception gracefully."""
-    from src.transmogrifier.cli import classify
+    from transmogrifier.cli import classify
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._task_classifier.classify.side_effect = Exception('Classifier failed')
         
@@ -646,10 +646,10 @@ def test_classify_classifier_failure(cli_runner, mock_transmogrifier):
 
 def test_translate_invalid_register(cli_runner, mock_transmogrifier):
     """Verify translate raises error for invalid target register value."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans, \
-         patch('src_transmogrifier_cli.Register') as MockRegister:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans, \
+         patch('transmogrifier.cli.Register') as MockRegister:
         
         MockTrans.return_value = mock_transmogrifier
         # Simulate Register validation raising ValueError for invalid value
@@ -668,9 +668,9 @@ def test_translate_invalid_register(cli_runner, mock_transmogrifier):
 
 def test_translate_translation_failure(cli_runner, mock_transmogrifier):
     """Verify translate handles translation exception gracefully."""
-    from src.transmogrifier.cli import translate
+    from transmogrifier.cli import translate
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier.translate.side_effect = Exception('Translation failed')
         
@@ -686,9 +686,9 @@ def test_translate_translation_failure(cli_runner, mock_transmogrifier):
 
 def test_profile_calibrate_backend_creation_failure(cli_runner):
     """Verify profile_calibrate handles backend creation error (invalid provider or credentials)."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create:
+    with patch('transmogrifier.cli.create_backend') as mock_create:
         mock_create.side_effect = Exception('Invalid provider or missing credentials')
         
         result = cli_runner.invoke(profile_calibrate, [
@@ -704,10 +704,10 @@ def test_profile_calibrate_backend_creation_failure(cli_runner):
 
 def test_profile_calibrate_calibration_failure(cli_runner, mock_backend):
     """Verify profile_calibrate handles calibration runner exception."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner:
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner:
         
         mock_create.return_value = mock_backend
         mock_runner = Mock()
@@ -727,10 +727,10 @@ def test_profile_calibrate_calibration_failure(cli_runner, mock_backend):
 
 def test_profile_calibrate_api_failure(cli_runner, mock_backend):
     """Verify profile_calibrate handles API call failures during benchmark."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner:
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner:
         
         mock_create.return_value = mock_backend
         mock_runner = Mock()
@@ -780,12 +780,12 @@ def test_invariant_click_library_missing():
 
 def test_invariant_json_output_format(cli_runner, mock_transmogrifier):
     """Verify all JSON outputs use standard json.dumps with appropriate formatting."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     mock_result = {'register': 'formal', 'confidence': 0.91}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans, \
-         patch('src_transmogrifier_cli.json.dumps', wraps=json.dumps) as mock_dumps:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans, \
+         patch('transmogrifier.cli.json.dumps', wraps=json.dumps) as mock_dumps:
         
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
@@ -804,11 +804,11 @@ def test_invariant_json_output_format(cli_runner, mock_transmogrifier):
 
 def test_invariant_stdout_routing(cli_runner, mock_transmogrifier):
     """Verify all commands output to stdout via click.echo."""
-    from src.transmogrifier.cli import detect
+    from transmogrifier.cli import detect
     
     mock_result = {'register': 'casual', 'confidence': 0.80}
     
-    with patch('src_transmogrifier_cli.Transmogrifier') as MockTrans:
+    with patch('transmogrifier.cli.Transmogrifier') as MockTrans:
         MockTrans.return_value = mock_transmogrifier
         mock_transmogrifier._detector.detect.return_value = mock_result
         
@@ -823,15 +823,15 @@ def test_invariant_stdout_routing(cli_runner, mock_transmogrifier):
 
 def test_invariant_quick_mode_task_count(cli_runner, mock_backend):
     """Verify quick calibration mode uses exactly 10 tasks from BENCHMARK_TASKS."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
     # Create a mock BENCHMARK_TASKS with 50 tasks
     mock_tasks = [f'task_{i}' for i in range(50)]
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner, \
-         patch('src_transmogrifier_cli.ProfileCache') as MockCache, \
-         patch('src_transmogrifier_cli.BENCHMARK_TASKS', mock_tasks):
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner, \
+         patch('transmogrifier.cli.ProfileCache') as MockCache, \
+         patch('transmogrifier.cli.BENCHMARK_TASKS', mock_tasks):
         
         mock_create.return_value = mock_backend
         mock_runner = Mock()
@@ -863,7 +863,7 @@ def test_invariant_quick_mode_task_count(cli_runner, mock_backend):
 
 def test_invariant_full_calibration_api_calls(cli_runner, mock_backend):
     """Verify full calibration makes 5 API calls per task (one per register)."""
-    from src.transmogrifier.cli import profile_calibrate
+    from transmogrifier.cli import profile_calibrate
     
     # Mock 3 tasks, so expect 3 * 5 = 15 API calls
     mock_tasks = ['task1', 'task2', 'task3']
@@ -875,10 +875,10 @@ def test_invariant_full_calibration_api_calls(cli_runner, mock_backend):
         api_call_count += 1
         return {'accuracy': 0.9}
     
-    with patch('src_transmogrifier_cli.create_backend') as mock_create, \
-         patch('src_transmogrifier_cli.CalibrationRunner') as MockRunner, \
-         patch('src_transmogrifier_cli.ProfileCache') as MockCache, \
-         patch('src_transmogrifier_cli.BENCHMARK_TASKS', mock_tasks):
+    with patch('transmogrifier.cli.create_backend') as mock_create, \
+         patch('transmogrifier.cli.CalibrationRunner') as MockRunner, \
+         patch('transmogrifier.cli.ProfileCache') as MockCache, \
+         patch('transmogrifier.cli.BENCHMARK_TASKS', mock_tasks):
         
         mock_create.return_value = mock_backend
         mock_backend.call_api = mock_api_call
