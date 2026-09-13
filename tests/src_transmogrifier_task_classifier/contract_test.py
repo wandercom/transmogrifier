@@ -6,7 +6,7 @@ Tests verify behavior at boundaries, covering happy paths, edge cases, and invar
 import pytest
 import random
 import string
-from src.transmogrifier.task_classifier import TaskClassifier, TaskType
+from transmogrifier.task_classifier import TaskClassifier, TaskType
 
 
 # Fixtures

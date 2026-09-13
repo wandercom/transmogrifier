@@ -1,5 +1,5 @@
 """
-Contract-based test suite for src_transmogrifier_system_prompts component.
+Contract-based test suite for transmogrifier.system_prompts component.
 Tests verify system prompt retrieval and injection functionality.
 
 Test Organization:
@@ -12,7 +12,7 @@ Coverage: 100% branch coverage with explicit assertions
 
 import pytest
 from unittest.mock import Mock
-from src.transmogrifier.system_prompts import (
+from transmogrifier.system_prompts import (
     get_system_prompt,
     inject_system_prompt,
     GENERIC_NORMALIZATION,

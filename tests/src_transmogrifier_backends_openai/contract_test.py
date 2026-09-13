@@ -47,7 +47,7 @@ class TestOpenAIBackendInit:
     def test_init_with_explicit_params(self, clean_env):
         """Initialize OpenAIBackend with explicit api_key and model parameters."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-api-key-123", model="gpt-4")
             
@@ -61,7 +61,7 @@ class TestOpenAIBackendInit:
         monkeypatch.setenv('TRANSMOG_MODEL', 'env-model')
         
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key=None, model=None)
             
@@ -72,7 +72,7 @@ class TestOpenAIBackendInit:
     def test_init_with_default_model(self, clean_env):
         """Initialize with api_key but no model defaults to gpt-4o-mini."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model=None)
             
@@ -83,7 +83,7 @@ class TestOpenAIBackendInit:
     def test_init_no_env_vars(self, clean_env):
         """Initialize with None params and no env vars uses empty string and default model."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key=None, model=None)
             
@@ -94,7 +94,7 @@ class TestOpenAIBackendInit:
     def test_invariant_default_model(self, clean_env):
         """Verify default model is gpt-4o-mini when not specified."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test", model=None)
             
@@ -103,7 +103,7 @@ class TestOpenAIBackendInit:
     def test_invariant_immutable_after_init(self, clean_env):
         """Verify _api_key and _model are immutable after __init__."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="original-key", model="original-model")
             
@@ -128,7 +128,7 @@ class TestOpenAIBackendEnsureClient:
             mock_client_instance = MagicMock()
             mock_openai_class.return_value = mock_client_instance
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             assert backend._client is None
@@ -145,7 +145,7 @@ class TestOpenAIBackendEnsureClient:
             mock_client_instance = MagicMock()
             mock_openai_class.return_value = mock_client_instance
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             backend._ensure_client()
@@ -173,7 +173,7 @@ class TestOpenAIBackendEnsureClient:
         with patch('builtins.__import__', side_effect=mock_import):
             # Need to reload module to trigger import error
             with pytest.raises(ImportError):
-                from src.transmogrifier.backends.openai import OpenAIBackend
+                from transmogrifier.backends.openai import OpenAIBackend
                 backend = OpenAIBackend(api_key="test-key", model="gpt-4")
                 backend._ensure_client()
 
@@ -183,7 +183,7 @@ class TestOpenAIBackendEnsureClient:
             from openai import AuthenticationError
             mock_openai_class.side_effect = AuthenticationError("Invalid API key")
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="invalid-key", model="gpt-4")
             
@@ -207,7 +207,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             result = backend.complete(
@@ -236,7 +236,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             result = backend.complete(
@@ -262,7 +262,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             messages = [
@@ -292,7 +292,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.side_effect = AuthenticationError("Invalid API key")
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="invalid-key", model="gpt-4")
             
@@ -311,7 +311,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.side_effect = RateLimitError("Rate limit exceeded")
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             
@@ -333,7 +333,7 @@ class TestOpenAIBackendComplete:
             )
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="invalid-model")
             
@@ -353,7 +353,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             
@@ -377,7 +377,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             
@@ -406,7 +406,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             backend.complete(
@@ -432,7 +432,7 @@ class TestOpenAIBackendComplete:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             
@@ -461,7 +461,7 @@ class TestOpenAIBackendParameterized:
     def test_init_parameter_combinations(self, clean_env, api_key, model, expected_key, expected_model):
         """Test various combinations of initialization parameters."""
         with patch('openai.OpenAI') as mock_openai:
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key=api_key, model=model)
             
@@ -483,7 +483,7 @@ class TestOpenAIBackendParameterized:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             result = backend.complete(
@@ -513,7 +513,7 @@ class TestOpenAIBackendEdgeCases:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             long_content = "x" * 10000  # Very long message
@@ -538,7 +538,7 @@ class TestOpenAIBackendEdgeCases:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             result = backend.complete(
@@ -562,7 +562,7 @@ class TestOpenAIBackendEdgeCases:
             mock_client.chat.completions.create.return_value = mock_response
             mock_openai_class.return_value = mock_client
             
-            from src.transmogrifier.backends.openai import OpenAIBackend
+            from transmogrifier.backends.openai import OpenAIBackend
             
             backend = OpenAIBackend(api_key="test-key", model="gpt-4")
             

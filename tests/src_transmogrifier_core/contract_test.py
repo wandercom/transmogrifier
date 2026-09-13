@@ -14,11 +14,11 @@ import uuid
 # Import the component under test
 # Assuming the module structure based on component_id and dependencies
 try:
-    from src.transmogrifier.core import Transmogrifier, TranslationResult, TranslationConfig, Register, TranslationLevel
-    from src.transmogrifier.detector import RegisterDetector
-    from src.transmogrifier.task_classifier import TaskClassifier
-    from src.transmogrifier.profiles import ProfileCache
-    from src.transmogrifier.rules import RuleEngine
+    from transmogrifier.core import Transmogrifier, TranslationResult, TranslationConfig, Register, TranslationLevel
+    from transmogrifier.detector import RegisterDetector
+    from transmogrifier.task_classifier import TaskClassifier
+    from transmogrifier.profiles import ProfileCache
+    from transmogrifier.rules import RuleEngine
 except ImportError:
     # Fallback import structure
     try:
@@ -275,10 +275,10 @@ class TestTranslateSuccessPaths:
     
     def test_translate_happy_path_same_register(self, mock_time, mock_uuid):
         """Happy path: Translate with detected == target register"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.TaskClassifier') as MockClassifier, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache, \
-             patch('src.transmogrifier.core.RuleEngine') as MockEngine:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.TaskClassifier') as MockClassifier, \
+             patch('transmogrifier.core.ProfileCache') as MockCache, \
+             patch('transmogrifier.core.RuleEngine') as MockEngine:
             
             # Setup mocks
             detector = Mock()
@@ -314,10 +314,10 @@ class TestTranslateSuccessPaths:
     
     def test_translate_happy_path_different_register(self, mock_time, mock_uuid):
         """Happy path: Translate with detected != target register"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.TaskClassifier') as MockClassifier, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache, \
-             patch('src.transmogrifier.core.RuleEngine') as MockEngine:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.TaskClassifier') as MockClassifier, \
+             patch('transmogrifier.core.ProfileCache') as MockCache, \
+             patch('transmogrifier.core.RuleEngine') as MockEngine:
             
             detector = Mock()
             detector.detect.return_value = Register.casual
@@ -380,10 +380,10 @@ class TestEdgeCases:
     
     def test_translate_skip_logic_invariant_profile(self, mock_time, mock_uuid):
         """Edge case: Skip when profile.is_invariant=True and task_spread < 2.0"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.TaskClassifier') as MockClassifier, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache, \
-             patch('src.transmogrifier.core.RuleEngine') as MockEngine:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.TaskClassifier') as MockClassifier, \
+             patch('transmogrifier.core.ProfileCache') as MockCache, \
+             patch('transmogrifier.core.RuleEngine') as MockEngine:
             
             detector = Mock()
             detector.detect.return_value = Register.technical
@@ -423,10 +423,10 @@ class TestEdgeCases:
     
     def test_config_precedence_method_over_constructor(self, mock_time, mock_uuid):
         """Edge case: Method-level config overrides constructor config"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.TaskClassifier') as MockClassifier, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache, \
-             patch('src.transmogrifier.core.RuleEngine') as MockEngine:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.TaskClassifier') as MockClassifier, \
+             patch('transmogrifier.core.ProfileCache') as MockCache, \
+             patch('transmogrifier.core.RuleEngine') as MockEngine:
             
             detector = Mock()
             detector.detect.return_value = Register.technical
@@ -544,7 +544,7 @@ class TestEdgeCases:
     
     def test_spread_threshold_boundary(self, mock_time, mock_uuid):
         """Edge case: spread_threshold_pp at exact boundary (2.0)"""
-        with patch('src.transmogrifier.core.ProfileCache') as MockCache:
+        with patch('transmogrifier.core.ProfileCache') as MockCache:
             profile = Mock()
             profile.is_invariant = True
             profile.task_spread = 2.0  # Exact boundary
@@ -571,9 +571,9 @@ class TestErrorCases:
     def test_translate_invalid_register_string(self):
         """Error case: Invalid register string raises ValueError"""
         # Create a mock config that bypasses pydantic validation
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.TaskClassifier') as MockClassifier, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.TaskClassifier') as MockClassifier, \
+             patch('transmogrifier.core.ProfileCache') as MockCache:
             
             detector = Mock()
             detector.detect.return_value = Register.technical
@@ -645,8 +645,8 @@ class TestInvariants:
     
     def test_level_applied_invariant_same_register(self, mock_time, mock_uuid):
         """Invariant: If detected == target, level_applied is system_prompt"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.ProfileCache') as MockCache:
             
             detector = Mock()
             detector.detect.return_value = Register.technical
@@ -668,9 +668,9 @@ class TestInvariants:
     
     def test_level_applied_invariant_different_register(self, mock_time, mock_uuid):
         """Invariant: If detected != target and max_level >= rule_rewrite, level_applied is rule_rewrite"""
-        with patch('src.transmogrifier.core.RegisterDetector') as MockDetector, \
-             patch('src.transmogrifier.core.ProfileCache') as MockCache, \
-             patch('src.transmogrifier.core.RuleEngine') as MockEngine:
+        with patch('transmogrifier.core.RegisterDetector') as MockDetector, \
+             patch('transmogrifier.core.ProfileCache') as MockCache, \
+             patch('transmogrifier.core.RuleEngine') as MockEngine:
             
             detector = Mock()
             detector.detect.return_value = Register.casual
@@ -697,7 +697,7 @@ class TestInvariants:
     
     def test_skipped_invariant_output_equals_input(self, mock_time, mock_uuid):
         """Invariant: If skipped=True, output_text == input_text"""
-        with patch('src.transmogrifier.core.ProfileCache') as MockCache:
+        with patch('transmogrifier.core.ProfileCache') as MockCache:
             profile = Mock()
             profile.is_invariant = True
             profile.task_spread = 1.5

@@ -16,7 +16,7 @@ from unittest.mock import Mock, patch, MagicMock
 import sys
 
 # Import component under test
-from src.transmogrifier.validator import SemanticValidator
+from transmogrifier.validator import SemanticValidator
 
 
 class TestInit:

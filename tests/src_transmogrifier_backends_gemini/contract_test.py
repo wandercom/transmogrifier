@@ -14,7 +14,7 @@ mock_genai = MagicMock()
 sys.modules['google.generativeai'] = mock_genai
 
 
-from src.transmogrifier.backends.gemini import GeminiBackend
+from transmogrifier.backends.gemini import GeminiBackend
 
 
 class TestGeminiBackendInit:
@@ -105,17 +105,17 @@ class TestGeminiBackendEnsureConfigured:
         try:
             # Reimport to get the failing module
             import importlib
-            import src_transmogrifier_backends_gemini
-            importlib.reload(src_transmogrifier_backends_gemini)
+            import transmogrifier.backends.gemini
+            importlib.reload(transmogrifier.backends.gemini)
             
-            backend = src_transmogrifier_backends_gemini.GeminiBackend(api_key="test-key", model="test-model")
+            backend = transmogrifier.backends.gemini.GeminiBackend(api_key="test-key", model="test-model")
             
             with pytest.raises(ImportError):
                 backend._ensure_configured()
         finally:
             # Restore the original mock module
             sys.modules['google.generativeai'] = original_module
-            importlib.reload(src_transmogrifier_backends_gemini)
+            importlib.reload(transmogrifier.backends.gemini)
     
     @patch('google.generativeai.configure')
     def test_ensure_configured_empty_api_key(self, mock_configure):
@@ -296,17 +296,17 @@ class TestGeminiBackendComplete:
         
         try:
             import importlib
-            import src_transmogrifier_backends_gemini
-            importlib.reload(src_transmogrifier_backends_gemini)
+            import transmogrifier.backends.gemini
+            importlib.reload(transmogrifier.backends.gemini)
             
-            backend = src_transmogrifier_backends_gemini.GeminiBackend(api_key="test-key", model="test-model")
+            backend = transmogrifier.backends.gemini.GeminiBackend(api_key="test-key", model="test-model")
             messages = [{'role': 'user', 'content': 'Hello'}]
             
             with pytest.raises(ImportError):
                 backend.complete(system="System", messages=messages, max_tokens=100)
         finally:
             sys.modules['google.generativeai'] = original_module
-            importlib.reload(src_transmogrifier_backends_gemini)
+            importlib.reload(transmogrifier.backends.gemini)
     
     @patch('google.generativeai.GenerativeModel')
     @patch('google.generativeai.configure')

@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from typing import Tuple
 
 # Import the component under test
-from src.transmogrifier.detector import *
+from transmogrifier.detector import *
 
 
 # ============================================================================
@@ -513,7 +513,7 @@ class TestMarkerInvariants:
     
     def test_casual_markers_exist(self):
         """CASUAL_MARKERS should contain 7 (pattern, weight) tuples with weights 1.0-2.5"""
-        from src.transmogrifier.detector import CASUAL_MARKERS
+        from transmogrifier.detector import CASUAL_MARKERS
         
         assert len(CASUAL_MARKERS) == 7, f"Expected 7 CASUAL_MARKERS, got {len(CASUAL_MARKERS)}"
         
@@ -523,7 +523,7 @@ class TestMarkerInvariants:
     
     def test_technical_markers_exist(self):
         """TECHNICAL_MARKERS should contain 5 (pattern, weight) tuples with weights 1.0-2.0"""
-        from src.transmogrifier.detector import TECHNICAL_MARKERS
+        from transmogrifier.detector import TECHNICAL_MARKERS
         
         assert len(TECHNICAL_MARKERS) == 5, f"Expected 5 TECHNICAL_MARKERS, got {len(TECHNICAL_MARKERS)}"
         
@@ -533,7 +533,7 @@ class TestMarkerInvariants:
     
     def test_academic_markers_exist(self):
         """ACADEMIC_MARKERS should contain 6 (pattern, weight) tuples with weights 1.5-2.5"""
-        from src.transmogrifier.detector import ACADEMIC_MARKERS
+        from transmogrifier.detector import ACADEMIC_MARKERS
         
         assert len(ACADEMIC_MARKERS) == 6, f"Expected 6 ACADEMIC_MARKERS, got {len(ACADEMIC_MARKERS)}"
         
@@ -543,7 +543,7 @@ class TestMarkerInvariants:
     
     def test_narrative_markers_exist(self):
         """NARRATIVE_MARKERS should contain 5 (pattern, weight) tuples with weights 1.0-3.0"""
-        from src.transmogrifier.detector import NARRATIVE_MARKERS
+        from transmogrifier.detector import NARRATIVE_MARKERS
         
         assert len(NARRATIVE_MARKERS) == 5, f"Expected 5 NARRATIVE_MARKERS, got {len(NARRATIVE_MARKERS)}"
         
@@ -553,14 +553,14 @@ class TestMarkerInvariants:
     
     def test_direct_markers_empty(self):
         """DIRECT_MARKERS should be an empty list (direct detected by absence + brevity)"""
-        from src.transmogrifier.detector import DIRECT_MARKERS
+        from transmogrifier.detector import DIRECT_MARKERS
         
         assert isinstance(DIRECT_MARKERS, list), "DIRECT_MARKERS should be a list"
         assert len(DIRECT_MARKERS) == 0, f"DIRECT_MARKERS should be empty, got {len(DIRECT_MARKERS)} items"
     
     def test_patterns_compiled_with_ignorecase(self):
         """All marker patterns should be compiled with re.IGNORECASE flag"""
-        from src.transmogrifier.detector import (
+        from transmogrifier.detector import (
             CASUAL_MARKERS, TECHNICAL_MARKERS, ACADEMIC_MARKERS, NARRATIVE_MARKERS
         )
         

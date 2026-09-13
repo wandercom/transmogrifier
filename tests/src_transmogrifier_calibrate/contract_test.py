@@ -16,13 +16,15 @@ import time
 import random
 import string
 
+# Import the backend protocol from its owning package.
+from transmogrifier.backends import Backend
+
 # Import component under test
-from src.transmogrifier.calibrate import (
+from transmogrifier.calibrate import (
     CalibrationRunner,
     score_response,
     REGISTER_TRANSFORMS,
     BENCHMARK_TASKS,
-    Backend,
     ProfileCache,
     ModelProfile,
     RegisterAccuracy,
@@ -221,7 +223,7 @@ class TestCalibrationRunnerInit:
         """Verify __init__ creates new ProfileCache when None provided."""
         mock_backend = Mock(spec=Backend)
         
-        with patch('src_transmogrifier_calibrate.ProfileCache') as MockProfileCache:
+        with patch('transmogrifier.calibrate.ProfileCache') as MockProfileCache:
             mock_cache_instance = Mock()
             MockProfileCache.return_value = mock_cache_instance
             
@@ -263,11 +265,11 @@ class TestCalibrationRunnerRun:
         model_version = "1.0"
         provider = "openai"
         
-        with patch('src_transmogrifier_calibrate.BENCHMARK_TASKS', [
+        with patch('transmogrifier.calibrate.BENCHMARK_TASKS', [
             {"category": "factual", "prompt": "test1", "accept": ["valid"], "reject": []},
             {"category": "reasoning", "prompt": "test2", "accept": ["valid"], "reject": []},
         ]):
-            with patch('src_transmogrifier_calibrate.REGISTER_TRANSFORMS', {
+            with patch('transmogrifier.calibrate.REGISTER_TRANSFORMS', {
                 "direct": lambda x: x,
                 "casual": lambda x: x,
             }):
@@ -307,7 +309,7 @@ class TestCalibrationRunnerRun:
         """Verify run works with custom register list provided."""
         custom_registers = ["direct", "casual"]
         
-        with patch('src_transmogrifier_calibrate.BENCHMARK_TASKS', [
+        with patch('transmogrifier.calibrate.BENCHMARK_TASKS', [
             {"category": "factual", "prompt": "test", "accept": ["valid"], "reject": []}
         ]):
             profile = self.runner.run(
@@ -322,7 +324,7 @@ class TestCalibrationRunnerRun:
         
         assert isinstance(profile, ModelProfile)
 
-    @patch('src_transmogrifier_calibrate.time.sleep')
+    @patch('transmogrifier.calibrate.time.sleep')
     def test_run_happy_path_with_delay(self, mock_sleep):
         """Verify run enforces delay between API calls."""
         custom_tasks = [
@@ -352,7 +354,7 @@ class TestCalibrationRunnerRun:
         ]
         custom_registers = ["direct"]
         
-        with patch('src_transmogrifier_calibrate.REGISTER_TRANSFORMS', {
+        with patch('transmogrifier.calibrate.REGISTER_TRANSFORMS', {
             "direct": lambda x: x
         }):
             profile = self.runner.run(
@@ -398,7 +400,7 @@ class TestCalibrationRunnerRun:
         
         assert isinstance(profile, ModelProfile)
 
-    @patch('src_transmogrifier_calibrate.time.sleep')
+    @patch('transmogrifier.calibrate.time.sleep')
     def test_run_edge_case_zero_delay(self, mock_sleep):
         """Verify run works with zero delay."""
         custom_tasks = [
@@ -417,7 +419,7 @@ class TestCalibrationRunnerRun:
         
         assert isinstance(profile, ModelProfile)
 
-    @patch('src_transmogrifier_calibrate.time.sleep')
+    @patch('transmogrifier.calibrate.time.sleep')
     def test_run_edge_case_large_delay(self, mock_sleep):
         """Verify run works with large delay value."""
         custom_tasks = [
@@ -504,7 +506,7 @@ class TestCalibrationRunnerRun:
         ]
         custom_registers = ["direct"]
         
-        with patch('src_transmogrifier_calibrate.REGISTER_TRANSFORMS', {
+        with patch('transmogrifier.calibrate.REGISTER_TRANSFORMS', {
             "direct": lambda x: f"Direct: {x}"
         }):
             profile = self.runner.run(
@@ -658,7 +660,7 @@ class TestIntegration:
         runner = CalibrationRunner(mock_backend, mock_cache)
         
         # Use minimal subset for speed
-        with patch('src_transmogrifier_calibrate.BENCHMARK_TASKS', 
+        with patch('transmogrifier.calibrate.BENCHMARK_TASKS',
                    BENCHMARK_TASKS[:5]):  # Use first 5 tasks
             profile = runner.run(
                 model_name="test-model",
@@ -709,7 +711,7 @@ class TestIntegration:
         
         assert "Intermittent failure" in str(exc_info.value)
 
-    @patch('src_transmogrifier_calibrate.time.sleep')
+    @patch('transmogrifier.calibrate.time.sleep')
     def test_delay_enforcement_with_multiple_tasks(self, mock_sleep):
         """Test that delay is properly enforced between multiple task executions."""
         mock_backend = Mock(spec=Backend)
