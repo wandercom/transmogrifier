@@ -8,7 +8,7 @@ version = "0.3.1"
 description = "Register-aware prompt translation — normalize linguistic register to maximize LLM output quality"
 requires-python = ">=3.12"
 license = "MIT"
-authors = [{ name = "Jeremy McEntire", email = "jmc@cageandmirror.com" }]
+authors = [{ name = "Wander" }]
 readme = "README.md"
 dependencies = [
     "pydantic>=2.0",
