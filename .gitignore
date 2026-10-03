@@ -15,3 +15,5 @@ venv/
 .env
 .transmogrifier/
 .constrain/
+.pact/state.json
+.pact/test-gen/
